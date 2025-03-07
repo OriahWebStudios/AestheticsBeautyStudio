@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Optional
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from datetime import datetime, timedelta
+from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
 
@@ -17,6 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+migrate = Migrate(app, db)
 login_manager.login_view = 'login'
 
 
