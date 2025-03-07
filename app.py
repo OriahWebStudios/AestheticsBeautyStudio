@@ -45,6 +45,11 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=True, nullable=False) 
 
+with app.app_context(): 
+    db.create_all()
+
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
@@ -221,11 +226,6 @@ def index():
         new_appointment = Appointment(date=selected_date, time=selected_time, name=form.name.data, email=form.email.data, phone=form.phone.data, service=form.service.data, notes=form.notes.data)
         db.session.add(new_appointment)
         db.session.commit()
-
-        socketio.emit('admin_notify', {
-            'message': f"📅 New Booking: {new_appointment.date} at {new_appointment.time} by {new_appointment.name}"
-        })
-
         return redirect(url_for('success'))
     return render_template('index.html', form=form, fully_booked_days=fully_booked_days, unavailable_slots=unavailable_slots, promotions_updates=promotions_updates)
 
@@ -305,4 +305,6 @@ def success():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', debug=False)
+    with app.app_context(): 
+        db.create_all()
+    app.run(host='0.0.0.0', debug=False)
