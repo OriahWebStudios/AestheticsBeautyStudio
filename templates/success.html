@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Successful - Aesthetics Beauty Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/08c0396a01.js" crossorigin="anonymous"></script>
+</head>
+<body style="background-color: rgb(255, 213, 173);">
+    <div id="loader">
+        <div class="loader-content">
+            <p style="text-align: center; font-size: 30pt;"><i class="fa-solid fa fa-smile"></i></p>
+            <p style="font-size: 15pt; text-align:center;">Scheduling Your Appointment. Please wait a moment....</p>
+            <span class="loader"></span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="header" style="border-bottom: 2px solid black;">
+            <a rel="noopener noreferrer" style="text-decoration: none;" href="{{ url_for('index') }}">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                    <p style="text-decoration: none; color: black;">| ASchedular</p>
+                </div>
+            </a>
+            <div class="client">
+                <p>Aesthetics Beauty Studio</p>
+            </div>
+        </div>
+        <div class="suc-container">
+            <i style="font-size: 30pt;" class="fa-solid fa-circle-check"></i>
+            <h1>Appointment Confirmed!</h1>
+            <p>Thank you for booking an appointment with us. Your appointment has been successfully booked.</p>
+            <a rel="noopener noreferrer" href="{{ url_for('index') }}"><i class="fa-solid fa-arrow-left"></i> Book another appointment</a>
+        </div>
+    
+        <footer style="border-top: 2px solid black;">
+            <p class="developer">Developed by</p>
+            <img src="{{ url_for('static', filename='/img/4-removebg-preview.png') }}" alt="">
+        </footer>
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('content');
+            
+            // Hide the loader and show the content
+            loader.style.display = 'none';
+            content.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

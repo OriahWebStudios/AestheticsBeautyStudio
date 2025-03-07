@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="rgb(255, 213, 173)">
+    <title>Aesthetics Beauty Studio - OWS | Aschedular</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://kit.fontawesome.com/08c0396a01.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="rgb(255, 213, 173)">
+    <meta name="apple-mobile-web-app-title" content="Aesthetics Beauty Studio">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/css/intlTelInput.css">
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+</head>
+<body>
+    <!-- <div class="yellow-warning">
+        <p>Click the arrow for the latest updates and exclusive promotions!</p>
+        <button class="dropdownBtn" id="dropdownBtn"><i class="fa-solid fa-chevron-down"></i></button>
+        <button class="closeBtn" id="closeBtn"><i class="fa-solid fa-chevron-up"></i></button>
+        <div id="dropdownContent" class="dropdown-content">
+            {% for promotion_update in promotions_updates %}
+                {% if promotion_update.promotion %}
+                    <p><i class="fa-solid fa-gift"></i><strong> Promotion: </strong> {{ promotion_update.promotion }}</p>
+                {% endif %}
+                {% if promotion_update.updates %}
+                    <p><i class="fa-solid fa-gear"></i><strong> Update: </strong> {{ promotion_update.updates }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div> -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="logo">
+                <img class="loader-img" src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                <span style="font-size: 18pt;">|</span>
+                <p style="text-decoration: none; color: black; font-size: 18pt;"> ASchedular</p>
+            </div>
+            <div class="client loader-client">
+                <p class="loader-client">Aesthetics Beauty Studio</p>
+            </div>
+            <span class="loader"></span>
+        </div>
+    </div>
+    <div id="content">
+        <div class="header header-admin">
+            <a style="text-decoration: none;" rel="noopener noreferrer" href="{{ url_for('index') }}">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                    <p style="text-decoration: none; color: black;">| ASchedular</p>
+                </div>
+            </a>
+            <div class="client">
+                <p>Aesthetics Beauty Studio</p>
+            </div>
+            <!--<button id="menu" class="menu"><i class="fa fa-bars"></i></button>
+            <button id="close-menu-items" class="close-menu-items"><i class="fa fa-times"></i></button>
+            <div id="menu-items" class="menu-items">
+                <a rel="noopener noreferrer" href="{{ url_for('login') }}"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
+            </div>-->
+        </div>
+        
+        <div class="container">
+            <div class="fully-booked-dates-times">
+                <h3><i class="fa-solid fa-calendar"></i> Booked Dates & Times</h3>
+                <div class="info" >
+                    {% if fully_booked_days == [] and unavailable_slots == {} %}
+                        <p>All dates and times are available for booking.</p>
+                    {% endif %}
+    
+                    {% for day in fully_booked_days %}
+                        <p><strong><i class="fa-solid fa-circle-xmark"></i> {{ day }} - Fully Booked</strong></p>
+                    {% endfor %}
+    
+                    {% for date, times in unavailable_slots.items() %}
+                        {% if date not in fully_booked_days %}
+                            <p><i class="fa-solid fa-clock"></i> <strong>{{ date }}</strong>: <span style="color: red;">{{ times | join(", ") }}</span></p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="error-flash">{{ message }}</div>
+                        {% else %}
+                            <div class="success-message">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('index') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control", id="name") }}
+                    <div class="error-message" id="name-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control", id="email") }}
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class="form-control", id="phone", style="width: 100%;", type="tel") }}
+                    <div class="error-message" id="phone-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.date.label(class="form-label") }}
+                    {{ form.date(class="form-control date-in", id="date", style="width: 100%;") }}
+                    <div class="error-message" id="date-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.time.label(class="form-label") }}
+                    {{ form.time(class="form-control time-in", id="time", style="width: 100%;") }}
+                    <div class="error-message" id="time-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.service.label(class="form-label") }}
+                    {{ form.service(class="form-control select-in", id="service") }}
+                    <div class="error-message" id="service-error"></div>
+                </div>
+                <div class="form-group">
+                    {{ form.notes.label(class="form-label") }}
+                    {{ form.notes(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary sbtn", id="submit") }}
+                </div>
+                <p style="font-size: 9pt; text-align: center;">The information you provide will be used solely for communication purposes and handled with care.</p>
+            </form>
+        </div>
+    
+        <footer>
+            <p class="developer">Developed by</p>
+            <img src="{{ url_for('static', filename='/img/4-removebg-preview.png') }}" alt="">
+        </footer>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/js/intlTelInput.min.js"></script>
+    <script>
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log("Running as PWA");
+        }
+
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('content');
+            
+            // Hide the loader and show the content
+            loader.style.display = 'none';
+            content.style.display = 'block';
+        });
+
+        // Errors
+        document.getElementById('submit').addEventListener('click', function() {
+            document.querySelectorAll('.error-message').forEach(error => error.innerText = '');
+
+            let hasError = false;
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const service = document.getElementById('service').value.trim();
+            const date = document.getElementById('date').value.trim();
+            const time = document.getElementById('time').value.trim();
+
+            const phoneRegex = /^(\+27)[1-9][0-9]{8}$/;
+
+            if (!name) {
+                document.getElementById('name-error').innerText = 'Full name is required';
+                hasError = true;
+            }
+            if (!email) {
+                document.getElementById('email-error').innerText = 'Email is required';
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById('email-error').innerText = 'Please enter a valid email address';
+                hasError = true;
+            }
+            if (!phone) {
+                document.getElementById('phone-error').innerText = 'Cell number is required';
+                hasError = true;
+            } else if (!phoneRegex.test(phone)) {
+                document.getElementById('phone-error').innerText = 'Please enter a valid cell number. E.g Country Code (+27)';
+                hasError = true;
+            }
+
+
+            if (!service) {
+                document.getElementById('service-error').innerText = 'Service is required';
+                hasError = true;
+            }
+            if (!date) {
+                document.getElementById('date-error').innerText = 'Date is required';
+                hasError = true;
+            }
+            if (!time) {
+                document.getElementById('time-error').innerText = 'Time is required';
+                hasError = true;
+            }
+           
+            if (hasError) { 
+                event.preventDefault(); 
+            } else { 
+                this.disabled = false;
+            }
+        });
+
+         // Initialize intl-tel-input
+        const input = document.querySelector("#phone_");
+        window.intlTelInput(input, {
+            initialCountry: "za",
+            separateDialCode: false,
+            placeholderNumberType: "MOBILE",
+            autoFormat: true, 
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+
+
+         });
+
+        // Dropdown menu
+        document.getElementById("menu").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            if (menuItems.style.display === "block") {
+                menuItems.style.display = "none";
+            } else {
+                menuItems.style.display = "flex";
+                anime({
+                    targets: menuItems,
+                    opacity: [0, 1],
+                    height: ['0px', '30px'],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+                document.getElementById("close-menu-items").style.display = "block";
+                document.getElementById("menu").style.display = "none";
+            }
+        };
+        
+        document.getElementById("close-menu-items").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            anime({
+                targets: menuItems,
+                opacity: [1, 0],
+                height: ['30px', '0px'],
+                duration: 500,
+                easing: 'easeInQuad',
+                complete: function() {
+                    menuItems.style.display = "none";
+                }
+            });
+            document.getElementById("close-menu-items").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+        };
+
+        // Dropdown menu
+        document.getElementById("dropdownBtn").onclick = function() {
+            const dropdownContent = document.getElementById("dropdownContent");
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+                anime({
+                    targets: dropdownContent,
+                    opacity: [0, 1],
+                    height: ['0px', '200px'],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+                document.getElementById("closeBtn").style.display = "flex";
+                document.getElementById("dropdownBtn").style.display = "none";
+            }
+        };
+        
+        document.getElementById("closeBtn").onclick = function() {
+            const dropdownContent = document.getElementById("dropdownContent");
+            anime({
+                targets: dropdownContent,
+                opacity: [1, 0],
+                height: ['200px', '0px'],
+                duration: 500,
+                easing: 'easeInQuad',
+                complete: function() {
+                    dropdownContent.style.display = "none";
+                }
+            });
+            document.getElementById("closeBtn").style.display = "none";
+            document.getElementById("dropdownBtn").style.display = "flex";
+        };
+        
+    </script>
+</body>
+</html>

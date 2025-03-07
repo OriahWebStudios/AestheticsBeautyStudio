@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesthetics Beauty Studio - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://kit.fontawesome.com/08c0396a01.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/css/intlTelInput.css">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OWSA - ABS">
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+</head>
+<body style="background-color: rgb(255, 213, 173);">
+    <div style="border-bottom: 2px solid black;" class="header header-admin">
+        <a rel="noopener noreferrer" style="text-decoration: none;" href="{{ url_for('index') }}">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                <p style="text-decoration: none; color: black;">| ASchedular</p>
+            </div>
+        </a>
+        <div class="client">
+            <p>Aesthetics Beauty Studio</p>
+        </div>
+    </div>
+    <div class="container login-container">
+        <h3>Hi, Admin.</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="error-flash">{{ message }}</div>
+                    {% else %}
+                        <div class="success-flash">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form class="login-form" action="{{ url_for('login') }}" method="post">
+            {{ form.hidden_tag() }}
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", id="name") }}
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+                {{ form.submit(class="btn btn-primary", id="submit") }}
+                <p style="font-size: 9pt; text-align:center;">Forgot Password? Please contact the administrator.</p>
+        </form>
+    </div>
+    <footer style="border-top: 2px solid black;">
+        <p class="developer">Developed by</p>
+        <img src="{{ url_for('static', filename='/img/4-removebg-preview.png') }}" alt="">
+    </footer>
+
+    </body>
+</html>

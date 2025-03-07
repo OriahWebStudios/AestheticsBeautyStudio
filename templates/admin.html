@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Aesthetics Beauty Studio </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/08c0396a01.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="rgb(255, 213, 173)">
+    <meta name="apple-mobile-web-app-title" content="ABS - Admin Panel">
+</head>
+<body>
+    <div id="loader" class="admin-loader">
+        <div class="loader-content admin-loader-content">
+            <p style="font-size: 15pt; text-align:center;">Working On It....</p>
+            <span class="a-loader"></span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="header header-admin">
+            <a style="text-decoration: none;" rel="noopener noreferrer" href="{{ url_for('index') }}">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                    <p style="text-decoration: none; color: black;">| ASchedular</p>
+                </div>
+            </a>
+            <div class="client">
+                <p>Aesthetics Beauty Studio | Administration</p>
+            </div>
+            <button id="menu" class="menu"><i class="fa fa-bars"></i></button>
+            <button id="close-menu-items" class="close-menu-items"><i class="fa fa-times"></i></button>
+            <div id="menu-items" class="menu-items">
+                <a href=""><i class="fa-solid fa fa-pencil"></i> Create Appointment</a>
+                <a href="{{ url_for('admin') }}" rel="noopener noreferrer"><i class="fa-solid fa-calendar"></i> Manage Appointments</a>
+                <a href="{{ url_for('manage_updates_promotions') }}" rel="noopener noreferrer"><i class="fa-solid fa-bullhorn"></i> Manage Updates and Promotions</a>
+                <a href="{{ url_for('logout') }}" rel="noopener noreferrer"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </div>
+    
+        <div class="admin-container">
+            <div class="app-header">
+                <h3><i class="fa-solid fa-list"></i> Appointment List</h3>
+                <button id="filter-btn" class="filter-btn"><i class="fa-solid fa-filter"></i> Filters</button>
+            </div>
+    
+            <div class="filters">
+                <form method="POST">
+                    {{ filter_form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ filter_form.name.label(class="form-label") }}
+                        {{ filter_form.name(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ filter_form.date.label(class="form-label") }}
+                        {{ filter_form.date(class="form-control date-in", style="width: 100%;") }}
+                    </div>
+                    <div class="form-group">
+                        {{ filter_form.time.label(class="form-label") }}
+                        {{ filter_form.time(class="form-control time-in", style="width: 100%;") }}
+                    </div>
+                    <div class="form-group">
+                        {{ filter_form.service.label(class="form-label") }}
+                        {{ filter_form.service(class="form-control select-in") }}
+                    </div>
+                    <div class="form-group">
+                        {{ filter_form.submit(class="apply-btn", id="submit") }}
+                        {{ filter_form.clear(class="apply-btn", style="margin-top: 10px;") }}
+                    </div>
+                </form>
+            </div>
+    
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="error-flash">{{ message }}</div>
+                        {% else %}
+                            <div class="success-flash">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="appointments">
+                {% for appointment in appointments %}
+                    <div class="appointment">
+                        <p style="font-size: 15pt; text-transform: uppercase;">{{ appointment.id }}. {{ appointment.name }}</p>
+                        <p><strong><i class="fa-solid fa-envelope"></i></strong> {{ appointment.email }}</p>
+                        <p><strong><i class="fa-solid fa-phone"></i></strong> {{ appointment.phone }}</p>
+                        <p><strong><i class="fa-solid fa-briefcase"></i></strong> {{ appointment.service }}</p>
+                        <p><strong><i class="fa-solid fa-calendar"></i></strong> {{ appointment.date.strftime('%Y-%m-%d') }}</p>
+                        <p><strong><i class="fa-solid fa-clock"></i></strong> {{ appointment.time }}</p>
+                        <p><strong><i class="fa-solid fa-sticky-note"></i></strong> {{ appointment.notes or 'No notes' }}</p>
+                        <div class="func-btns">
+                            <form action="{{ url_for('delete', id=appointment.id) }}" method="POST">
+                                <button type="submit" class="btn btn-complete"><i class="fa-solid fa-circle-check"></i> Completed</button>
+                            </form>
+                            <button id="editBtn{{ appointment.id }}" type="submit" class="btn-complete" data-id="{{ appointment.id }}"><i class="fa-solid fa-pencil"></i> Reschedule</button>
+                            <form action="{{ url_for('delete', id=appointment.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Cancel/Delete</button>
+                            </form>
+                        </div>
+                        <div id="edit-form{{ appointment.id }}" class="edit-form">
+                            <form action="{{ url_for('edit_appointment', id=appointment.id) }}" method="POST">
+                                {{ form.hidden_tag() }}
+                                <div class="form-group">
+                                    {{ form.date.label(class="form-label") }}
+                                    {{ form.date(class="form-control date-in", style="width: 100%;") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.time.label(class="form-label") }}
+                                    {{ form.time(class="form-control time-in", style="width: 100%;") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.submit(class="edit-btn", id="submit") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    
+        <footer class="admin-footer">
+            <p class="developer">Developed by</p>
+            <img src="{{ url_for('static', filename='/img/4-removebg-preview.png') }}" alt="">
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('content');
+            
+            // Hide the loader and show the content
+            loader.style.display = 'none';
+            content.style.display = 'block';
+        });
+
+        // Dropdown menu
+        document.getElementById("menu").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            if (menuItems.style.display === "block") {
+                menuItems.style.display = "none";
+            } else {
+                menuItems.style.display = "flex";
+                anime({
+                    targets: menuItems,
+                    opacity: [0, 1],
+                    height: ['0px', '135px'],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+                document.getElementById("close-menu-items").style.display = "block";
+                document.getElementById("menu").style.display = "none";
+            }
+        };
+        
+        document.getElementById("close-menu-items").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            anime({
+                targets: menuItems,
+                opacity: [1, 0],
+                height: ['135px', '0px'],
+                duration: 500,
+                easing: 'easeInQuad',
+                complete: function() {
+                    menuItems.style.display = "none";
+                }
+            });
+            document.getElementById("close-menu-items").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+        };
+
+        // Show Edit Form
+        document.querySelectorAll('button[id^="editBtn"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const appointmentId = this.getAttribute('data-id');
+                const editForm = document.getElementById(`edit-form${appointmentId}`);
+                if (editForm.style.display === "block") {
+                    editForm.style.display = "none";
+                } else {
+                    editForm.style.display = "block";
+                    anime({
+                        targets: editForm,
+                        opacity: [0, 1],
+                        height: ['0px', '210px'],
+                        duration: 500,
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+        });
+
+        // Show Filter form
+        document.getElementById("filter-btn").addEventListener("click", function() {
+            const filters = document.querySelector(".filters");
+            if (filters.style.display === "block") {
+                filters.style.display = "none";
+            } else {
+                filters.style.display = "block";
+                anime({
+                    targets: filters,
+                    opacity: [0, 1],
+                    height: ['0px', '500px'],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+            }
+        });
+    </script>
+</body>
+</html>

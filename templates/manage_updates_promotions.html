@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Aesthetics Beauty Studio </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/08c0396a01.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+</head>
+<body>
+    <div class="header header-admin">
+        <a style="text-decoration: none;" rel="noopener noreferrer" href="{{ url_for('index') }}">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='/img/7-removebg-preview.png') }}" alt="">
+                <p style="text-decoration: none; color: black;">| ASchedular</p>
+            </div>
+        </a>
+        <div class="client">
+            <p>Aesthetics Beauty Studio | Administration</p>
+        </div>
+        <button id="menu" class="menu"><i class="fa fa-bars"></i></button>
+        <button id="close-menu-items" class="close-menu-items"><i class="fa fa-times"></i></button>
+        <div id="menu-items" class="menu-items">
+            <a rel="noopener noreferrer" href=""><i class="fa-solid fa fa-pencil"></i> Create Appointment</a>
+            <a rel="noopener noreferrer" href="{{ url_for('admin') }}"><i class="fa-solid fa-calendar"></i> Manage Appointments</a>
+            <a rel="noopener noreferrer" href="{{ url_for('manage_updates_promotions') }}"><i class="fa-solid fa-bullhorn"></i> Manage Updates and Promotions</a>
+            <a rel="noopener noreferrer" href="{{ url_for('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="app-header">
+            <h3><i class="fa-solid fa-bullhorn"></i> Add Promotions and Updates</h3>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="error-flash">{{ message }}</div>
+                    {% else %}
+                        <div class="success-flash">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('manage_updates_promotions') }}" method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.promotion.label(class="form-label") }}
+                {{ form.promotion(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.update.label(class="form-label") }}
+                {{ form.update(class="form-control") }}
+                <div class="form-group">
+                    {{ form.submit(class="pd_btn", id="submit") }}
+                </div>
+            </div>
+        </form>
+        <div class="appointments">
+            <div style="margin-bottom: 15px;" class="app-header">
+                <h3>Displayed Promotions and Updates</h3>
+            </div>
+            {% for promotion_update in promotions_updates %}
+                <div class="appointment promotion-update">
+                    <p style="margin-bottom: 15px;">{{ promotion_update.promotion or promotion_update.updates }}</p>
+                    <form action="{{ url_for('delete_promotion_update', id=promotion_update.id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Remove from display</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="admin-footer">
+        <p class="developer">Developed by</p>
+        <img src="{{ url_for('static', filename='/img/4-removebg-preview.png') }}" alt="">
+    </footer>
+
+    <script>
+        // Dropdown menu
+        document.getElementById("menu").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            if (menuItems.style.display === "block") {
+                menuItems.style.display = "none";
+            } else {
+                menuItems.style.display = "flex";
+                anime({
+                    targets: menuItems,
+                    opacity: [0, 1],
+                    height: ['0px', '135px'],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+                document.getElementById("close-menu-items").style.display = "block";
+                document.getElementById("menu").style.display = "none";
+            }
+        };
+        
+        document.getElementById("close-menu-items").onclick = function() {
+            const menuItems = document.getElementById("menu-items");
+            anime({
+                targets: menuItems,
+                opacity: [1, 0],
+                height: ['135px', '0px'],
+                duration: 500,
+                easing: 'easeInQuad',
+                complete: function() {
+                    menuItems.style.display = "none";
+                }
+            });
+            document.getElementById("close-menu-items").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+        };
+        
+    </script>
+</body>
+</html>
