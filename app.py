@@ -45,6 +45,24 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=True, nullable=False) 
 
+def add_user_credentials():
+    # Check if the user already exists
+    existing_user = Users.query.filter_by(username='hopemaluleka').first()
+    if not existing_user:
+        # Add the new user with plain text credentials
+        new_user = Users(
+            username='hopemaluleka',
+            password='Abs@admin'  # Using plain text password
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        print('Done')
+    else:
+        print('Already exists')
+
+with app.app_context(): 
+    db.create_all()
+    add_user_credentials()
 
 @login_manager.user_loader
 def load_user(user_id):
