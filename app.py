@@ -5,14 +5,11 @@ from wtforms.validators import DataRequired, Optional
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from datetime import datetime, timedelta
-from flask_socketio import SocketIO
 import os
 from dotenv import load_dotenv
 
 
-env_path = "C:/Users/Oriah/Desktop/OWS Applications/Simple Booking System/.env"
-
-load_dotenv(env_path)
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -304,7 +301,6 @@ def edit_appointment(id):
 def success():
     return render_template('success.html')
 
-print("Using database:", os.getenv('DATABASE_URI'))
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=5000, debug=True)
+   app.run(host='0.0.0.0', debug=False)
