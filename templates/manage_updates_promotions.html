@@ -23,7 +23,6 @@
         <button id="menu" class="menu"><i class="fa fa-bars"></i></button>
         <button id="close-menu-items" class="close-menu-items"><i class="fa fa-times"></i></button>
         <div id="menu-items" class="menu-items">
-            <a rel="noopener noreferrer" href=""><i class="fa-solid fa fa-pencil"></i> Create Appointment</a>
             <a rel="noopener noreferrer" href="{{ url_for('admin') }}"><i class="fa-solid fa-calendar"></i> Manage Appointments</a>
             <a rel="noopener noreferrer" href="{{ url_for('manage_updates_promotions') }}"><i class="fa-solid fa-bullhorn"></i> Manage Updates and Promotions</a>
             <a rel="noopener noreferrer" href="{{ url_for('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -90,7 +89,7 @@
                 anime({
                     targets: menuItems,
                     opacity: [0, 1],
-                    height: ['0px', '135px'],
+                    height: ['0px', '130px'],
                     duration: 500,
                     easing: 'easeOutQuad'
                 });
@@ -104,7 +103,7 @@
             anime({
                 targets: menuItems,
                 opacity: [1, 0],
-                height: ['135px', '0px'],
+                height: ['130px', '0px'],
                 duration: 500,
                 easing: 'easeInQuad',
                 complete: function() {
