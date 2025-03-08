@@ -6,7 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from datetime import datetime, timedelta
 from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import vonage
 from dotenv import load_dotenv
 
 
@@ -45,14 +47,28 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=True, nullable=False) 
 
+client = vonage.Cient(key=os.getenv('VONAGE_API_KEY'), secret=os.getenv('VONAGE_API_SECRET'))
+sms = vonage.Sms(client)
+
+def send_sms(to, message):
+    responseData = sms.send_message({
+        'from': os.getenv('VONAGE_NUMBER')
+        'to': to,
+        'text': message,
+    })
+
+    if responseData['messages'][0]['status'] == '0':
+        print('Message sent successfully')
+    else:
+        print(f'Message failed with error: {responseData['messages'][0]['error-text']}')
+
 def add_user_credentials():
-    # Check if the user already exists
     existing_user = Users.query.filter_by(username='hopemaluleka').first()
     if not existing_user:
-        # Add the new user with plain text credentials
+        hashed_password = generate_password_hash('Abs@admin', method='sha256')
         new_user = Users(
             username='hopemaluleka',
-            password='Abs@admin'  # Using plain text password
+            password=hashed_password  
         )
         db.session.add(new_user)
         db.session.commit()
@@ -187,7 +203,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
-        if user and user.password == form.password.data:
+        if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             return redirect(url_for('admin'))
         flash('Invalid Username or Password', 'error')
@@ -240,6 +256,10 @@ def index():
         new_appointment = Appointment(date=selected_date, time=selected_time, name=form.name.data, email=form.email.data, phone=form.phone.data, service=form.service.data, notes=form.notes.data)
         db.session.add(new_appointment)
         db.session.commit()
+
+        message = f'Dear {form.name.data}, your appointment for {form.service.data} is confirmed on {form.date.data} at {form.time.data.strftime('%H:%M')}.'
+        send_sms(form.phone.data, message)
+
         return redirect(url_for('success'))
     return render_template('index.html', form=form, fully_booked_days=fully_booked_days, unavailable_slots=unavailable_slots, promotions_updates=promotions_updates)
 
