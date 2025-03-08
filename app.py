@@ -50,10 +50,9 @@ class Users(UserMixin, db.Model):
 def add_user_credentials():
     existing_user = Users.query.filter_by(username='hopemaluleka').first()
     if not existing_user:
-        hashed_password = generate_password_hash('Abs@admin', method='sha256')
         new_user = Users(
             username='hopemaluleka',
-            password=hashed_password  
+            password='Abs@admin'  
         )
         db.session.add(new_user)
         db.session.commit()
@@ -188,7 +187,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        if user and form.password.data == user.password:
             login_user(user)
             return redirect(url_for('admin'))
         flash('Invalid Username or Password', 'error')
@@ -241,7 +240,7 @@ def index():
         new_appointment = Appointment(date=selected_date, time=selected_time, name=form.name.data, email=form.email.data, phone=form.phone.data, service=form.service.data, notes=form.notes.data)
         db.session.add(new_appointment)
         db.session.commit()
-        
+
         return redirect(url_for('success'))
     return render_template('index.html', form=form, fully_booked_days=fully_booked_days, unavailable_slots=unavailable_slots, promotions_updates=promotions_updates)
 
