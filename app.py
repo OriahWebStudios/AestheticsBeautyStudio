@@ -60,7 +60,7 @@ def send_sms(to, message):
     if responseData['messages'][0]['status'] == '0':
         print('Message sent successfully')
     else:
-        print(f'Message failed with error: {responseData['messages'][0]['error-text']}')
+        print('Message failed with error')
 
 def add_user_credentials():
     existing_user = Users.query.filter_by(username='hopemaluleka').first()
