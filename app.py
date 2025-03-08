@@ -257,7 +257,7 @@ def index():
         db.session.add(new_appointment)
         db.session.commit()
 
-        message = f'Dear {form.name.data}, your appointment for {form.service.data} is confirmed on {form.date.data} at {form.time.data.strftime('%H:%M')}.'
+        message = f'Dear {form.name.data}, your appointment for {form.service.data} is confirmed on {selected_date} at {selected_time}.'
         send_sms(form.phone.data, message)
 
         return redirect(url_for('success'))
