@@ -52,7 +52,7 @@ sms = vonage.Sms(client)
 
 def send_sms(to, message):
     responseData = sms.send_message({
-        'from': os.getenv('VONAGE_NUMBER')
+        'from': os.getenv('VONAGE_NUMBER'),
         'to': to,
         'text': message,
     })
