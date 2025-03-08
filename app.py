@@ -47,21 +47,6 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=True, nullable=False) 
 
-client = vonage.Client(key=os.getenv('VONAGE_API_KEY'), secret=os.getenv('VONAGE_API_SECRET'))
-sms = vonage.Sms(client)
-
-def send_sms(to, message):
-    responseData = sms.send_message({
-        'from': os.getenv('VONAGE_NUMBER'),
-        'to': to,
-        'text': message,
-    })
-
-    if responseData['messages'][0]['status'] == '0':
-        print('Message sent successfully')
-    else:
-        print('Message failed with error')
-
 def add_user_credentials():
     existing_user = Users.query.filter_by(username='hopemaluleka').first()
     if not existing_user:
@@ -256,10 +241,7 @@ def index():
         new_appointment = Appointment(date=selected_date, time=selected_time, name=form.name.data, email=form.email.data, phone=form.phone.data, service=form.service.data, notes=form.notes.data)
         db.session.add(new_appointment)
         db.session.commit()
-
-        message = f'Dear {form.name.data}, your appointment for {form.service.data} is confirmed on {selected_date} at {selected_time}.'
-        send_sms(form.phone.data, message)
-
+        
         return redirect(url_for('success'))
     return render_template('index.html', form=form, fully_booked_days=fully_booked_days, unavailable_slots=unavailable_slots, promotions_updates=promotions_updates)
 
