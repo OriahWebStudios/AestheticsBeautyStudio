@@ -49,8 +49,12 @@ class Users(UserMixin, db.Model):
 
 def add_user_credentials():
     existing_user = Users.query.filter_by(username='hopemaluleka').first()
-    if existing_user:
-        db.session.delete(existing_user)
+    if not existing_user:
+        new_user = Users(
+            username='hopemaluleka',
+            password='Abs@admin'  
+        )
+        db.session.add(new_user)
         db.session.commit()
         print('Done')
     else:
